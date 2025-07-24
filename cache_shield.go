@@ -66,7 +66,7 @@ func (c *CacheShield) LoadOrStore(ctx context.Context, key string, callback Call
 
 	conn := c.pool.Get(ctx)
 	result, err = conn.Get(key)
-	if (err != nil && !errors.Is(err, redis.Nil)) || (err == nil) {
+	if err == nil || !errors.Is(err, redis.Nil) {
 		return
 	}
 
@@ -82,7 +82,7 @@ func (c *CacheShield) LoadOrStore(ctx context.Context, key string, callback Call
 	defer func() { _, err = mutex.Unlock() }()
 
 	result, err = conn.Get(key)
-	if (err != nil && !errors.Is(err, redis.Nil)) || (err == nil) {
+	if err == nil || !errors.Is(err, redis.Nil) {
 		return
 	}
 
